@@ -1,8 +1,8 @@
 // archivo: ejecutarTestYReportar.js
 
-import {enviarResultado} from './index';
-import {exec} from 'child_process';
-import fs from 'fs';
+const {enviarResultado} = require('./index');
+const {exec} = require('child_process');
+const fs = require('fs');
 
 exec('npx cypress run', async (error) => {
     try {
@@ -25,4 +25,4 @@ exec('npx cypress run', async (error) => {
     } catch (err) {
       await enviarResultado(`⚠️ Error al leer el reporte JSON: ${err.message}`);
     }
-  });
+});

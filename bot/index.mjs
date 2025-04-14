@@ -1,4 +1,8 @@
-import {Client, GatewayIntentBits} from 'discord.js';
+import { Client, GatewayIntentBits } from 'discord.js';
+import dotenv from 'dotenv';
+
+// Initialize dotenv
+dotenv.config();
 
 const client = new Client({
     intents: [
@@ -6,24 +10,27 @@ const client = new Client({
         GatewayIntentBits.GuildMessages,
         GatewayIntentBits.MessageContent
     ]
-})
+});
 
-const XDModal = "MTM2MDA1MjA3MDExNTQ0Njg4NA.GMegnx.7_cEMtFvc2Lq_878NEY8qcNg603cj6mOr_6z04";
-const CHANNEL_ID = "1131666782277599233";
+const TOKEN = process.env.DISCORD_TOKEN || '';
+const CHANNEL_ID = process.env.CHANNEL_ID || "1131666782277599233";
+
+if (!TOKEN) {
+    console.error('Error: DISCORD_TOKEN environment variable is not set');
+    process.exit(1);
+}
 
 client.once('ready', () => {
   console.log(`Bot conectado como ${client.user.tag}`);
 });
 
-client.login(XDModal).then(() => {
+client.login(TOKEN).then(() => {
   console.log('Bot conectado correctamente.');
 }).catch(err => {
   console.error('Error al conectar el bot:', err);
 });
 
-async function enviarResultado(mensaje) {
+export async function enviarResultado(mensaje) {
   const canal = await client.channels.fetch(CHANNEL_ID);
   await canal.send(mensaje);
 }
-
-export {enviarResultado};
