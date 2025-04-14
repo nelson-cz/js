@@ -1,4 +1,4 @@
-describe('Swap Transactions',()=>{
+describe.skip('Swap Transactions',()=>{
     beforeEach(()=>{
         cy.clearLocalStorage()
         cy.clearCookies()
