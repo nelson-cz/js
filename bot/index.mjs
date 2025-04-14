@@ -30,6 +30,8 @@ client.login(TOKEN).then(() => {
   console.error('Error al conectar el bot:', err);
 });
 
+
+
 export async function enviarResultado(mensaje) {
   const canal = await client.channels.fetch(CHANNEL_ID);
   await canal.send(mensaje);
