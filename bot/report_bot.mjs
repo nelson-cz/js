@@ -1,13 +1,13 @@
 // archivo: ejecutarTestYReportar.js
 
-const {enviarResultado} = require('./index');
-const {exec} = require('child_process');
-const fs = require('fs');
+import { enviarResultado } from './index.mjs';
+import { exec } from 'child_process';
+import { readFileSync } from 'fs';
 
 exec('npx cypress run', async (error) => {
     try {
       const reportPath = './cypress/reports/mochawesome.json';
-      const raw = fs.readFileSync(reportPath);
+      const raw = readFileSync(reportPath);
       const json = JSON.parse(raw);
   
       const stats = json.stats;
