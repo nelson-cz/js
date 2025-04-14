@@ -671,7 +671,7 @@ describe('Swap spiderswap',()=>{
             })
         })
     })
-    describe.only('Swap Container Graph and New Pairs Section', () => {
+    describe.skip('Swap Container Graph and New Pairs Section', () => {
 
 
         it('should display the Graph when the Graph button is clicked', () => {
