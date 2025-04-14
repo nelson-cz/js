@@ -1,23 +1,23 @@
-const { defineConfig } = require('cypress')
+import { defineConfig } from 'cypress'
+import { devServer } from '@cypress/webpack-dev-server'
 
-module.exports = defineConfig({
-
-  reporter: 'mochawesome',
-  reporterOptions:{
-    reportDir: 'cypress/reports',
-    overwrite: true, // true para que se sobrescriba el archivo anterior
-    html: false, //no se genera el archivo html
-    json: true, //se genera el archivo json
-    timestamp: 'mmddyyyy_HHMMss' //se genera el archivo con el tiempo actual
-  },
+export default defineConfig({
   e2e: {
-    baseUrl: 'http://localhost:3000',
-    testIsolation: false,
+    baseUrl: 'https://www.spiderswap.io',
+    chromeWebSecurity: false,
     defaultCommandTimeout: 30000,
-    setupNodeEvents (on, config) {
+    experimentalStudio: false,
+    reporter: 'mochawesome',
+    reporterOptions: {
+      reportDir: 'cypress/reports',
+      overwrite: false,
+      html: false,
+      json: true,
+      timestamp: true
     },
-    experimentalStudio: true
-
+    setupNodeEvents(on, config) {
+      // implement node event listeners here
+    },
   },
   env: {
     SOLANA_RPC: 'https://ratty-wandie-fast-mainnet.helius-rpc.com/',
@@ -25,5 +25,5 @@ module.exports = defineConfig({
     WALLET_ADDR: '9BCpdVZWuKQY4uQFusFhsB3DRSJ5NMdwU5ZMEB9pi873',
     WALLET_SHORT_ADDR: '9BCpd...pi873'
   },
-  video: false
+  video: false,
 })

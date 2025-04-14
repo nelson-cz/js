@@ -1,28 +1,46 @@
 // archivo: ejecutarTestYReportar.js
 
 import { enviarResultado } from './index.mjs';
-import { exec } from 'child_process';
-import { readFileSync } from 'fs';
+import { readdirSync, readFileSync } from 'fs';
+import { join } from 'path';
 
-exec('npx cypress run', async (error) => {
+async function main() {
     try {
-      const reportPath = './cypress/reports/mochawesome.json';
-      const raw = readFileSync(reportPath);
-      const json = JSON.parse(raw);
-  
-      const stats = json.stats;
-      const resultados = `
-  📊 **Resultados del test (Cypress)**
-  
-  ✅ Pasaron: ${stats.passes}
-  ❌ Fallaron: ${stats.failures}
-  ⚠️ Tests pendientes: ${stats.pending}
-  ⏱️ Duración: ${stats.duration} ms
-  🔁 Total de tests: ${stats.tests}
-  `;
-  
-      await enviarResultado(resultados);
+        const reportsDir = './cypress/reports';
+        const files = readdirSync(reportsDir).filter(f => f.startsWith('mochawesome') && f.endsWith('.json'));
+        
+        let totalStats = {
+            passes: 0,
+            failures: 0,
+            pending: 0,
+            tests: 0,
+            duration: 0
+        };
+
+        for (const file of files) {
+            const raw = readFileSync(join(reportsDir, file));
+            const json = JSON.parse(raw);
+            totalStats.passes += json.stats.passes;
+            totalStats.failures += json.stats.failures;
+            totalStats.pending += json.stats.pending;
+            totalStats.tests += json.stats.tests;
+            totalStats.duration += json.stats.duration;
+        }
+
+        const resultados = `
+📊 **Resultados del test (Cypress)**
+
+✅ Pasaron: ${totalStats.passes}
+❌ Fallaron: ${totalStats.failures}
+⚠️ Tests pendientes: ${totalStats.pending}
+⏱️ Duración: ${totalStats.duration} ms
+🔁 Total de tests: ${totalStats.tests}
+`;
+
+        await enviarResultado(resultados);
     } catch (err) {
-      await enviarResultado(`⚠️ Error al leer el reporte JSON: ${err.message}`);
+        await enviarResultado(`⚠️ Error al procesar los reportes: ${err.message}`);
     }
-});
+}
+
+main();
