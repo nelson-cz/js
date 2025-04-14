@@ -4,8 +4,9 @@ on:
   schedule:
     - cron: '0 * * * *'  # Se ejecuta cada hora
   push:
-    branches: [ main ]  # Se ejecuta en cada push a main
-  workflow_dispatch:   
+    branches:
+      - main  # Se ejecuta en cada push a main
+  workflow_dispatch:
 
 env:
   NODE_VERSION: '22'
@@ -16,56 +17,53 @@ env:
 jobs:
   production-test:
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v5
-    
-    - name: Use Node.js ${{ env.NODE_VERSION }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ env.NODE_VERSION }}
-        cache: 'npm'
-    
-    - name: Install dependencies
-      run: npm install --prefer-offline --no-audit --progress=false --legacy-peer-deps
-    
-    - name: Run Cypress tests
-      uses: cypress-io/github-action@v6
-      with:
-        browser: chrome
-        config: >-
-          {
-            "baseUrl": "https://www.spiderswap.io",
-            "video": false,
-            "defaultCommandTimeout": 30000,
-            "experimentalStudio": false,
-            "reporter": "mochawesome",
-            "reporterOptions": {
-              "reportDir": "cypress/reports",
-              "overwrite": false,
-              "html": false,
-              "json": true
+      - uses: actions/checkout@v3.1.0
+        with:
+          fetch-depth: 0  # Fetch all history for all branches and tags
+      
+      - name: Use Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      
+      - name: Run Cypress tests
+        uses: cypress-io/github-action@v6
+        with:
+          browser: chrome
+          config: |
+            {
+              "baseUrl": "https://www.spiderswap.io",
+              "video": false,
+              "defaultCommandTimeout": 30000,
+              "experimentalStudio": false,
+              "reporter": "mochawesome",
+              "reporterOptions": {
+                "reportDir": "cypress/reports",
+                "overwrite": false,
+                "html": false,
+                "json": true
+              }
             }
-          }
-      env:
-        CYPRESS_BASE_URL: 'https://www.spiderswap.io'
-        CYPRESS_SOLANA_RPC: ${{ env.SOLANA_RPC }}
-        CYPRESS_WALLET_SEED: ${{ secrets.WALLET_SEED }}
-        CYPRESS_WALLET_ADDR: ${{ secrets.WALLET_ADDR }}
-        CYPRESS_WALLET_SHORT_ADDR: ${{ secrets.WALLET_SHORT_ADDR }}
+        env:
+          CYPRESS_BASE_URL: 'https://www.spiderswap.io'
+          CYPRESS_SOLANA_RPC: ${{ env.SOLANA_RPC }}
+          CYPRESS_WALLET_SEED: ${{ secrets.WALLET_SEED }}
+          CYPRESS_WALLET_ADDR: ${{ secrets.WALLET_ADDR }}
+          CYPRESS_WALLET_SHORT_ADDR: ${{ secrets.WALLET_SHORT_ADDR }}
 
-    - name: Upload test results
-      if: always()
-      uses: actions/upload-artifact@v3
-      with:
-        name: cypress-test-results
-        path: cypress/reports/
-        retention-days: 30
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: cypress-test-results
+          path: cypress/reports/
+          retention-days: 30
 
-    - name: Send results to Discord
-      if: always()
-      env:
-        DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
-        DISCORD_CHANNEL_ID: ${{ secrets.DISCORD_CHANNEL_ID }}
-      run: node bot/report_bot.mjs
-
+      - name: Send results to Discord
+        if: always()
+        env:
+          DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+          DISCORD_CHANNEL_ID: ${{ secrets.DISCORD_CHANNEL_ID }}
+        run: node bot/report_bot.mjs
