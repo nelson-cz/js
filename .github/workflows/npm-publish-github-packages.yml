@@ -3,6 +3,9 @@ name: Automated Tests
 on:
   schedule:
     - cron: '0 * * * *'  # Se ejecuta cada hora
+  push:
+    branches: [ main ]  # Se ejecuta en cada push a main
+  workflow_dispatch:   
 
 env:
   NODE_VERSION: '20'
