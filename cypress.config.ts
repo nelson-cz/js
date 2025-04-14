@@ -1,5 +1,4 @@
 import { defineConfig } from 'cypress'
-import { devServer } from '@cypress/webpack-dev-server'
 
 export default defineConfig({
   e2e: {
@@ -16,7 +15,7 @@ export default defineConfig({
       timestamp: true
     },
     setupNodeEvents(on, config) {
-      // implement node event listeners here
+      return config;
     },
   },
   env: {
