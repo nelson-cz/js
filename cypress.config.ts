@@ -1,6 +1,6 @@
-import { defineConfig } from 'cypress'
+import { defineConfig } from 'cypress';
 
-export default defineConfig({
+const config = defineConfig({
   e2e: {
     baseUrl: 'https://www.spiderswap.io',
     chromeWebSecurity: false,
@@ -25,4 +25,6 @@ export default defineConfig({
     WALLET_SHORT_ADDR: '9BCpd...pi873'
   },
   video: false,
-})
+});
+
+export default config;

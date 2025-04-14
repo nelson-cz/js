@@ -25,17 +25,33 @@ if (!CHANNEL_ID) {
     process.exit(1);
 }
 
+let isReady = false;
+
 client.once('ready', () => {
-  console.log(`Bot conectado como ${client.user.tag}`);
+    console.log(`Bot conectado como ${client.user.tag}`);
+    isReady = true;
 });
 
-client.login(TOKEN).then(() => {
-  console.log('Bot conectado correctamente.');
-}).catch(err => {
-  console.error('Error al conectar el bot:', err);
+client.login(TOKEN).catch(err => {
+    console.error('Error al conectar el bot:', err);
+    process.exit(1);
 });
 
 export async function enviarResultado(mensaje) {
-  const canal = await client.channels.fetch(CHANNEL_ID);
-  await canal.send(mensaje);
+    // Wait for client to be ready
+    while (!isReady) {
+        await new Promise(resolve => setTimeout(resolve, 100));
+    }
+    
+    try {
+        const canal = await client.channels.fetch(CHANNEL_ID);
+        if (!canal) {
+            throw new Error('Could not find the specified channel');
+        }
+        await canal.send(mensaje);
+        console.log('Message sent successfully');
+    } catch (error) {
+        console.error('Error sending message:', error);
+        throw error;
+    }
 }
