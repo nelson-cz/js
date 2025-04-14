@@ -57,9 +57,9 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v3
         with:
-          name: cypress-test-results
-          path: cypress/reports/
-          retention-days: 30
+            name: cypress-test-results
+            path: cypress/reports/
+            retention-days: 30
 
       - name: Send results to Discord
         if: always()
