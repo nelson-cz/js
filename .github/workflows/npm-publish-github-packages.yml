@@ -8,7 +8,7 @@ on:
   workflow_dispatch:   
 
 env:
-  NODE_VERSION: '20'
+  NODE_VERSION: '22'
   NEXT_PUBLIC_API_URL: 'https://www.spiderswap.io/'
   SOLANA_RPC: 'https://ratty-wandie-fast-mainnet.helius-rpc.com/'
   NEXT_PUBLIC_SOLANA_RPC_HOST: 'https://ratty-wandie-fast-mainnet.helius-rpc.com/'
