@@ -1,6 +1,6 @@
 import { defineConfig } from 'cypress';
 
-const config = defineConfig({
+export default defineConfig({
   e2e: {
     baseUrl: 'https://www.spiderswap.io',
     chromeWebSecurity: false,
@@ -26,5 +26,3 @@ const config = defineConfig({
   },
   video: false,
 });
-
-export default config;
