@@ -4,6 +4,9 @@ import { enviarResultado } from './index.mjs';
 import { readdirSync, readFileSync } from 'fs';
 import { join } from 'path';
 
+// Set a 5-minute timeout
+const TIMEOUT = 5 * 60 * 1000; // 5 minutes in milliseconds
+
 async function main() {
     try {
         const reportsDir = './cypress/reports';
@@ -38,8 +41,16 @@ async function main() {
 `;
 
         await enviarResultado(resultados);
+        
+        // Set timeout to force exit after 5 minutes
+        setTimeout(() => {
+            console.log('Tiempo límite de 5 minutos alcanzado. Cerrando el bot...');
+            process.exit(0);
+        }, TIMEOUT);
+
     } catch (err) {
         await enviarResultado(`⚠️ Error al procesar los reportes: ${err.message}`);
+        process.exit(1);
     }
 }
 
