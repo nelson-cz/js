@@ -31,20 +31,20 @@ async function main() {
         }
 
         const resultados = `
-📊 **Resultados del test (Cypress)**
+📊 **Test Results (Cypress)**
 
-✅ Pasaron: ${totalStats.passes}
-❌ Fallaron: ${totalStats.failures}
-⚠️ Tests pendientes: ${totalStats.pending}
-⏱️ Duración: ${totalStats.duration} ms
-🔁 Total de tests: ${totalStats.tests}
+✅ Passed: ${totalStats.passes}
+❌ Failed: ${totalStats.failures}
+⚠️ Pending tests: ${totalStats.pending}
+⏱️ Duration: ${totalStats.duration} ms
+🔁 Total tests: ${totalStats.tests}
 `;
 
         await enviarResultado(resultados);
         
         // Set timeout to force exit after 5 minutes
         setTimeout(() => {
-            console.log('Tiempo límite de 5 minutos alcanzado. Cerrando el bot...');
+            console.log('5 minute time limit reached. Closing the bot...');
             process.exit(0);
         }, TIMEOUT);
 
