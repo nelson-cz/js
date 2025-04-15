@@ -15,6 +15,10 @@ env:
 jobs:
   production-test:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+    
     steps:
     - uses: actions/checkout@v4
    
@@ -54,11 +58,12 @@ jobs:
         
     - name: Upload test results
       if: always()
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: cypress-test-results
         path: cypress/reports/
         retention-days: 30
+        if-no-files-found: warn
         
     - name: Send results to Discord
       if: always()
