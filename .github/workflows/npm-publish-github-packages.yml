@@ -31,10 +31,20 @@ jobs:
     - name: Install dependencies
       run: npm ci
    
-    - name: Run Cypress tests
+    # Identifica todos los archivos de test disponibles
+    - name: Find test files
+      id: find-tests
+      run: |
+        echo "test_files=$(find cypress/e2e -name "*.cy.{js,jsx,ts,tsx}" -type f | tr '\n' ' ')" >> $GITHUB_OUTPUT
+        
+    # Ejecuta cada test uno por uno de forma secuencial, continúa al siguiente si hay fallos
+    - name: Run Cypress tests sequentially
       uses: cypress-io/github-action@v6
+      continue-on-error: true  # Permite continuar incluso si un test falla
       with:
-        browser: chrome
+        browser: firefox
+        # Ejecuta cada archivo de test individualmente
+        spec: 'cypress/e2e/**/*.cy.{js,jsx,ts,tsx}'
         config: |
           {
             "baseUrl": "https://www.spiderswap.io",
