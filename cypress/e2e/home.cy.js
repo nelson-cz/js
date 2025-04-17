@@ -1,8 +1,13 @@
 describe('Home spiderswap',()=>{
     beforeEach(()=>{
-        cy.intercept('*', (req) => {
-            req.headers = {
-              ...req.headers,
+        // Interceptar TODAS las solicitudes y modificar headers
+        cy.intercept('**/*', (req) => {
+            // Forzar los headers
+            delete req.headers['user-agent'];
+            delete req.headers['sec-ch-ua'];
+            delete req.headers['sec-ch-ua-platform'];
+            
+            Object.assign(req.headers, {
               'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Cypress/12.0.0',
               'X-Cypress-Test': 'true',
               'X-Testing-Environment': 'production',
@@ -10,9 +15,16 @@ describe('Home spiderswap',()=>{
               'sec-ch-ua-platform': '"Windows"',
               'sec-ch-ua-mobile': '?0',
               'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
-              'Accept-Language': 'es-ES,es;q=0.9,en;q=0.8'
-            };
-          });
+              'Accept-Language': 'es-ES,es;q=0.9,en;q=0.8',
+              'Cache-Control': 'no-cache'
+            });
+            cy.clearLocalStorage()
+            cy.clearCookies()
+            cy.viewport(1920, 1080)
+            cy.visit('/') 
+            cy.disconnectWallet()
+        }).as('requests');
+
         cy.clearLocalStorage()
         cy.clearCookies()
         cy.viewport(1920, 1080);
