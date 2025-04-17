@@ -20,38 +20,38 @@ async function main() {
             duration: 0
         };
 
-        // Resultados generales primero
-        let resultadosGenerales = `📊 **Resumen de Tests (Cypress)**\n\n`;
+        // General results first
+        let resultadosGenerales = `📊 **Cypress Test Summary**\n\n`;
         
-        // Detalles por archivo
+        // Details by file
         let resultadosDetallados = [];
 
         for (const file of files) {
             const raw = readFileSync(join(reportsDir, file));
             const json = JSON.parse(raw);
             
-            // Acumular estadísticas totales
+            // Accumulate total statistics
             totalStats.passes += json.stats.passes;
             totalStats.failures += json.stats.failures;
             totalStats.pending += json.stats.pending;
             totalStats.tests += json.stats.tests;
             totalStats.duration += json.stats.duration;
             
-            // Crear reporte detallado por archivo
-            const testTitle = json.results[0]?.suites[0]?.title || "Test sin título";
+            // Create detailed report per file
+            const testTitle = json.results[0]?.suites[0]?.title || "Untitled Test";
             let reportePorArchivo = `\n🔍 **${testTitle}**\n`;
             
-            // Extraer suites y tests
+            // Extract suites and tests
             if (json.results && json.results.length > 0) {
                 json.results.forEach(result => {
                     if (result.suites && result.suites.length > 0) {
                         result.suites.forEach(suite => {
-                            // Agregar información por suite si hay más de una
+                            // Add information per suite if there is more than one
                             if (suite.title !== testTitle) {
                                 reportePorArchivo += `\n📁 ${suite.title}\n`;
                             }
                             
-                            // Agregar cada test individual
+                            // Add each individual test
                             if (suite.tests && suite.tests.length > 0) {
                                 suite.tests.forEach(test => {
                                     const estado = test.pass ? "✅" : test.fail ? "❌" : "⚠️";
@@ -59,7 +59,7 @@ async function main() {
                                 });
                             }
                             
-                            // Si hay sub-suites, también incluirlas
+                            // If there are sub-suites, include them too
                             if (suite.suites && suite.suites.length > 0) {
                                 suite.suites.forEach(subSuite => {
                                     reportePorArchivo += `\n  📂 ${subSuite.title}\n`;
@@ -77,30 +77,30 @@ async function main() {
                 });
             }
             
-            // Estadísticas del archivo
-            reportePorArchivo += `\n📊 Resumen: ✅ ${json.stats.passes} | ❌ ${json.stats.failures} | ⏱️ ${json.stats.duration}ms\n`;
+            // File statistics
+            reportePorArchivo += `\n📊 Summary: ✅ ${json.stats.passes} | ❌ ${json.stats.failures} | ⏱️ ${json.stats.duration}ms\n`;
             
             resultadosDetallados.push(reportePorArchivo);
         }
 
-        // Completar el resumen general
-        resultadosGenerales += `✅ Aprobados: ${totalStats.passes}\n`;
-        resultadosGenerales += `❌ Fallidos: ${totalStats.failures}\n`;
-        resultadosGenerales += `⚠️ Tests pendientes: ${totalStats.pending}\n`;
-        resultadosGenerales += `⏱️ Duración total: ${totalStats.duration} ms\n`;
-        resultadosGenerales += `🔁 Total de tests: ${totalStats.tests}\n`;
+        // Complete the general summary
+        resultadosGenerales += `✅ Passed: ${totalStats.passes}\n`;
+        resultadosGenerales += `❌ Failed: ${totalStats.failures}\n`;
+        resultadosGenerales += `⚠️ Pending tests: ${totalStats.pending}\n`;
+        resultadosGenerales += `⏱️ Total duration: ${totalStats.duration} ms\n`;
+        resultadosGenerales += `🔁 Total tests: ${totalStats.tests}\n`;
 
-        // Enviar el resumen general
+        // Send the general summary
         await enviarResultado(resultadosGenerales);
         
-        // Enviar cada reporte detallado (dividido para evitar problemas con el límite de 2000 caracteres)
+        // Send each detailed report (divided to avoid issues with the 2000 character limit)
         for (const reporte of resultadosDetallados) {
-            // Dividir mensajes largos en partes más pequeñas
+            // Divide long messages into smaller parts
             const MAX_LENGTH = 1900;
             if (reporte.length <= MAX_LENGTH) {
                 await enviarResultado(reporte);
             } else {
-                // Dividir el reporte en partes más pequeñas
+                // Divide the report into smaller parts
                 let mensaje = '';
                 const lineas = reporte.split('\n');
                 
@@ -126,7 +126,7 @@ async function main() {
         }, TIMEOUT);
 
     } catch (err) {
-        await enviarResultado(`⚠️ Error al procesar los reportes: ${err.message}`);
+        await enviarResultado(`⚠️ Error processing reports: ${err.message}`);
         process.exit(1);
     }
 }
