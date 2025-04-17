@@ -18,20 +18,14 @@ describe('Home spiderswap',()=>{
               'Accept-Language': 'es-ES,es;q=0.9,en;q=0.8',
               'Cache-Control': 'no-cache'
             });
-            cy.clearLocalStorage()
-            cy.clearCookies()
-            cy.viewport(1920, 1080)
-            cy.visit('/') 
-            cy.disconnectWallet()
-        }).as('requests');
+          }).as('requests');
+      
+          cy.clearLocalStorage()
+          cy.clearCookies()
+          cy.visit('/home');
+          cy.viewport(1920, 1080);
 
-        cy.clearLocalStorage()
-        cy.clearCookies()
-        cy.viewport(1920, 1080);
-        cy.visit('/home')
-        cy.disconnectWallet()
-
-    })
+         })
     it('Home can be opened',()=>{
         cy.get('h1').should('contain','Your Gateway to Solana Aggregation').should('be.visible')
     })

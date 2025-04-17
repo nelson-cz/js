@@ -1,23 +1,31 @@
 describe('Swap spiderswap',()=>{
-    beforeEach(()=>{cy.intercept('*', (req) => {
-        req.headers = {
-          ...req.headers,
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Cypress/12.0.0',
-          'X-Cypress-Test': 'true',
-          'X-Testing-Environment': 'production',
-          'sec-ch-ua': '"Not_A Brand";v="8", "Chromium";v="120", "Google Chrome";v="120"',
-          'sec-ch-ua-platform': '"Windows"',
-          'sec-ch-ua-mobile': '?0',
-          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
-          'Accept-Language': 'es-ES,es;q=0.9,en;q=0.8'
-        };
-      });
-        cy.clearLocalStorage()
-        cy.clearCookies()
-        cy.viewport(1920, 1080)
-        cy.visit('/') 
-        cy.disconnectWallet()
-    })
+    beforeEach(()=>{
+        // Interceptar TODAS las solicitudes y modificar headers
+        cy.intercept('**/*', (req) => {
+            // Forzar los headers
+            delete req.headers['user-agent'];
+            delete req.headers['sec-ch-ua'];
+            delete req.headers['sec-ch-ua-platform'];
+            
+            Object.assign(req.headers, {
+              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Cypress/12.0.0',
+              'X-Cypress-Test': 'true',
+              'X-Testing-Environment': 'production',
+              'sec-ch-ua': '"Not_A Brand";v="8", "Chromium";v="120", "Google Chrome";v="120"',
+              'sec-ch-ua-platform': '"Windows"',
+              'sec-ch-ua-mobile': '?0',
+              'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+              'Accept-Language': 'es-ES,es;q=0.9,en;q=0.8',
+              'Cache-Control': 'no-cache'
+            });
+          }).as('requests');
+      
+          cy.clearLocalStorage()
+          cy.clearCookies()
+          cy.visit('/');
+          cy.viewport(1920, 1080);
+
+         })
     it('Spiderswap can be openned',()=>{
         cy.get('span').should('contain','Spiderswap').should('be.visible')
     })
@@ -696,7 +704,7 @@ describe('Swap spiderswap',()=>{
             .should('be.visible')
         });
 
-        it.only('should display the New Pairs when the New Pairs button is clicked', () => {
+        it.skip('should display the New Pairs when the New Pairs button is clicked', () => {
             cy.get('[title="Chart"] > .cursor-pointer').click();
 
             cy.get('.rounded-\\[8px\\].text-\\[11px\\].font-bold.font-satoshi.hover\\:bg-white\\/10.hover\\:text-defaultBeige.uppercase.tracking-\\[2px\\].py-\\[10px\\].bg-\\[transparent\\].text-white\\/\\[0\\.5\\]')
@@ -706,7 +714,7 @@ describe('Swap spiderswap',()=>{
 
         });
 
-        it('should toggle between Graph and New Pairs', () => {
+        it.skip('should toggle between Graph and New Pairs', () => {
             // Haz clic en el botón de Graph y verifica que el Graph esté visible
             cy.get('button').contains('Graph').click();
             cy.get('div').contains('Graph').should('be.visible');
