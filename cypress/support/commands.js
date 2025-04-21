@@ -188,6 +188,15 @@ Cypress.Commands.add("mockTransactionReject",()=>{
   )
 })
 
+Cypress.Commands.add("mockTransactionSigning", () => {
+  cy.window().then(win => {
+    win.solana.signTransaction = () => Promise.resolve({
+      signature: "mocked-transaction-signature",
+      publicKey: win.solana.publicKey
+    });
+  });
+})
+
 Cypress.Commands.add('mockTokenBalances', () => {
   cy.window().then(win => {
     // Mock más completo de tokens con la estructura correcta
@@ -218,4 +227,33 @@ Cypress.Commands.add('mockTokenBalances', () => {
     win.solana.getTokenAccounts = () => Promise.resolve(mockTokenAccounts);
     win.solana.getBalance = () => Promise.resolve(1000000000000); // 1000 SOL
   });
+});
+
+// Comando para aplicar los headers personalizados desde las variables de entorno
+Cypress.Commands.add('applyCustomHeaders', () => {
+  // Interceptar todas las solicitudes y aplicar los headers personalizados
+  cy.intercept('**/*', (req) => {
+    // Eliminar headers específicos que podrían ser detectados por sistemas anti-bot
+    delete req.headers['user-agent'];
+    delete req.headers['sec-ch-ua'];
+    delete req.headers['sec-ch-ua-platform'];
+    
+    // Aplicar los headers personalizados desde las variables de entorno
+    const customHeaders = Cypress.env('HEADERS') ? JSON.parse(Cypress.env('HEADERS')) : {
+      'X-Cypress-Test': 'true',
+      'X-Testing-Environment': 'production'
+    };
+    
+    // Combinar los headers
+    Object.assign(req.headers, {
+      'User-Agent': Cypress.env('USER_AGENT') || 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Cypress/12.0.0',
+      ...customHeaders,
+      'sec-ch-ua': '"Not_A Brand";v="8", "Chromium";v="120", "Google Chrome";v="120"',
+      'sec-ch-ua-platform': '"Windows"',
+      'sec-ch-ua-mobile': '?0',
+      'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+      'Accept-Language': 'es-ES,es;q=0.9,en;q=0.8',
+      'Cache-Control': 'no-cache'
+    });
+  }).as('customHeaderRequests');
 });

@@ -3,9 +3,8 @@ import { defineConfig } from 'cypress';
 export default defineConfig({
   e2e: {
     baseUrl: 'https://www.spiderswap.io',
-    chromeWebSecurity: false,
-    defaultCommandTimeout: 30000,
-    experimentalStudio: false,
+    chromeWebSecurity: true,
+    experimentalStudio: true,
     reporter: 'mochawesome',
     reporterOptions: {
       reportDir: 'cypress/reports',
@@ -17,6 +16,7 @@ export default defineConfig({
     setupNodeEvents(on, config) {
       return config;
     },
+    experimentalRunAllSpecs: true,
   },
   env: {
     SOLANA_RPC: 'https://ratty-wandie-fast-mainnet.helius-rpc.com/',
@@ -25,4 +25,5 @@ export default defineConfig({
     WALLET_SHORT_ADDR: '9BCpd...pi873'
   },
   video: false,
+  numTestsKeptInMemory: 50,
 });

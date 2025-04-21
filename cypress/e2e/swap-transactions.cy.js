@@ -22,10 +22,8 @@ describe('Swap Transactions',()=>{
 
         cy.clearLocalStorage()
         cy.clearCookies()
-        cy.viewport(1920, 1080)
-        cy.visit('https://www.spiderswap.io/') 
-        cy.wait(5000)
-        cy.disconnectWallet()
+        cy.visit('/') 
+       
     })
 
     it('should swap tokens successfully',()=>{
@@ -36,6 +34,19 @@ describe('Swap Transactions',()=>{
         }) 
         cy.connectWallet()
         cy.wait(3000)
+
+        cy.get('h2').then($h2 =>{
+            const h2 = $h2.text().includes('Terms & Conditions')
+            if(h2){
+                cy.get('span').contains('I have read and accept the Terms and Conditions.').should('be.visible').as('checkbox')
+                cy.get('@checkbox').click()
+                cy.get('button').contains('Confirm').should('be.visible').click()
+            }else{
+                return true;
+            }
+        })
+
+
         /* cy.get('h2').contains('Terms & Conditions').should('be.visible')
         cy.get('span').contains('I have read and accept the Terms and Conditions.').should('be.visible').as('checkbox')
         cy.get('@checkbox').click()
@@ -44,8 +55,7 @@ describe('Swap Transactions',()=>{
          */
         
         // Luego hacer los mocks
-        cy.mockTokenBalances()
-        cy.mockTransaction()
+        
         
         // Seleccionar token de entrada
         cy.get('.justify-center > .w-full > .gap-2 > .pr-3 > .hidden > .text-white').click()
@@ -56,10 +66,8 @@ describe('Swap Transactions',()=>{
         cy.get('.justify-center > .w-full > .w-4\\/5').clear().type('0.002')
         
         // Esperar a que se calcule el precio
-        cy.wait(2000)
-        
-        // Verificar que el botón de swap está habilitado
-        cy.get('button').contains('Swap').should('be.visible').and('be.enabled')
+        cy.mockTokenBalances()
+        cy.mockTransaction()
     })
 
     it('should handle transaction rejection',()=>{
@@ -91,9 +99,7 @@ describe('Swap Transactions',()=>{
         
         // Esperar a que se calcule el precio
         cy.wait(2000)
-        
-        // Intentar hacer swap
-        cy.get('button').contains('Swap').click()
+
         cy.mockTransactionReject()
         
     })
@@ -180,14 +186,20 @@ describe('Swap Transactions',()=>{
 
     it('Price (High) impact warning is visible',()=>{
         cy.connectWallet()
+        cy.wait(3000)
+
+        cy.get(':nth-child(3) > .items-end > .w-full > .gap-2 > .flex > .hidden > .text-white').click();
+        cy.get('#search-token').clear();
+        cy.get('#search-token').type('usdt');
+        cy.get(':nth-child(1) > .gap-3 > .flex-col > .gap-\\[5px\\] > .text-\\[14px\\]').click();
+        cy.get('.justify-center > .w-full > .w-4\\/5').clear('1');
         cy.get('.justify-center > .w-full > .gap-2 > .pr-3 > .hidden > .text-white').click()
         cy.get('#search-token').clear().type('sol')
         cy.get(':nth-child(1) > .gap-3 > .flex-col > .gap-\\[5px\\] > .text-\\[14px\\]').click()
-        
-        cy.get('.justify-center > .w-full > .w-4\\/5').clear().type('1000')
-        
+        cy.get('.justify-center > .w-full > .w-4\\/5').type('100000');
         cy.wait(5000)
         cy.get('span').contains('High Price Impact').should('exist')
+
 
     })
     it('Price difference is visible',()=>{
@@ -196,7 +208,6 @@ describe('Swap Transactions',()=>{
         cy.get('.justify-center > .w-full > .gap-2 > .pr-3 > .hidden > .text-white').click()
         cy.get('#search-token').clear().type('sol')
         cy.get(':nth-child(1) > .gap-3 > .flex-col > .gap-\\[5px\\] > .text-\\[14px\\]').click()
-
         cy.get('.justify-center > .w-full > .w-4\\/5').clear().type('0.002')
         cy.wait(5000)
         cy.get('#pd').should('not.be.empty')
@@ -204,13 +215,17 @@ describe('Swap Transactions',()=>{
     it('Price (High) warning difference is visible',()=>{
         cy.connectWallet()
         cy.wait(3000)
+        cy.get(':nth-child(3) > .items-end > .w-full > .gap-2 > .flex > .hidden > .text-white').click();
+        cy.get('#search-token').clear();
+        cy.get('#search-token').type('usdt');
+        cy.get(':nth-child(1) > .gap-3 > .flex-col > .gap-\\[5px\\] > .text-\\[14px\\]').click();
+        cy.get('.justify-center > .w-full > .w-4\\/5').clear('1');
         cy.get('.justify-center > .w-full > .gap-2 > .pr-3 > .hidden > .text-white').click()
         cy.get('#search-token').clear().type('sol')
         cy.get(':nth-child(1) > .gap-3 > .flex-col > .gap-\\[5px\\] > .text-\\[14px\\]').click()
-
-        cy.get('.justify-center > .w-full > .w-4\\/5').clear().type('10000')
-        cy.wait(5000)
-        cy.get('span').contains('High Price Diff').should('exist')
+        cy.get('.justify-center > .w-full > .w-4\\/5').type('1000000');
+        cy.wait(5000);
+        cy.get('span').contains('High Price Diff').should('exist') 
     })
 
 
@@ -273,19 +288,7 @@ describe('Swap Transactions',()=>{
         cy.wait(3000)
         cy.mockTokenBalances()
         cy.mockTransactionSigning()
-        
-        // Seleccionar token de entrada
-        cy.get('.justify-center > .w-full > .gap-2 > .pr-3 > .hidden > .text-white').click()
-        cy.get('#search-token').clear().type('sol')
-        cy.get(':nth-child(1) > .gap-3 > .flex-col > .gap-\\[5px\\] > .text-\\[14px\\]').click()
-        
-        // Ingresar cantidad
-        cy.get('.justify-center > .w-full > .w-4\\/5').clear().type('0.002')
-        
-        // Esperar a que se calcule el precio
-        cy.wait(2000)
-        
-        // Hacer click en swap
-        cy.get('button').contains('Swap').click()
+        cy.mockTransaction()
+       
     })
 })

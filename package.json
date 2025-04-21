@@ -9,7 +9,9 @@
     "start": "next start",
     "lint": "next lint",
     "cypress:open": "cypress open",
-    "cypress:run": "npx cypress run --browser chrome --headless"
+    "cypress:run": "npx cypress run --browser chrome --headless",
+    "cypress:parallel": "npx cypress run --browser chrome --headless --parallel",
+    "cypress:sequential": "npx cypress run --browser chrome --headless --spec 'cypress/e2e/**/*.cy.{js,jsx,ts,tsx}'"
   },
   "devDependencies": {
     "cypress": "^14.3.0",

@@ -22,10 +22,11 @@ describe('Swap spiderswap',()=>{
       
           cy.clearLocalStorage()
           cy.clearCookies()
+          cy.viewport(1920, 1080)
           cy.visit('/');
-          cy.viewport(1920, 1080);
+          cy.disconnectWallet()
 
-         })
+    })
     it('Spiderswap can be openned',()=>{
         cy.get('span').should('contain','Spiderswap').should('be.visible')
     })
