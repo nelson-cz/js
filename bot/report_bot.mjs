@@ -54,7 +54,7 @@ async function main() {
                             // Add each individual test
                             if (suite.tests && suite.tests.length > 0) {
                                 suite.tests.forEach(test => {
-                                    const estado = test.pass ? "✅" : test.fail ? "❌" : "⚠️";
+                                    const estado = test.pass ? " ✅" : test.fail ? " ❌" : " ⚠️";
                                     reportePorArchivo += `${estado} ${test.title} (${test.duration}ms)\n`;
                                 });
                             }
@@ -66,7 +66,7 @@ async function main() {
                                     
                                     if (subSuite.tests && subSuite.tests.length > 0) {
                                         subSuite.tests.forEach(test => {
-                                            const estado = test.pass ? "✅" : test.fail ? "❌" : "⚠️";
+                                            const estado = test.pass ? " ✅" : test.fail ? " ❌" : " ⚠️";
                                             reportePorArchivo += `  ${estado} ${test.title} (${test.duration}ms)\n`;
                                         });
                                     }
