@@ -54,7 +54,7 @@ async function main() {
                             // Add each individual test
                             if (suite.tests && suite.tests.length > 0) {
                                 suite.tests.forEach(test => {
-                                    const estado = test.pass ? " ✅" : test.fail ? " ❌" : " ⚠️";
+                                    const estado = test.pass ? "      ✅" : test.fail ? "    ❌" : " ⚠️";
                                     reportePorArchivo += `${estado} ${test.title} (${test.duration}ms)\n`;
                                 });
                             }
@@ -62,11 +62,12 @@ async function main() {
                             // If there are sub-suites, include them too
                             if (suite.suites && suite.suites.length > 0) {
                                 suite.suites.forEach(subSuite => {
-                                    reportePorArchivo += `\n  📂 ${subSuite.title}\n`;
+                                    reportePorArchivo += `\n   📂 ${subSuite.title}\n`;
                                     
                                     if (subSuite.tests && subSuite.tests.length > 0) {
                                         subSuite.tests.forEach(test => {
-                                            const estado = test.pass ? " ✅" : test.fail ? " ❌" : " ⚠️";
+                                            
+                                            const estado = test.pass ? "      ✅" : test.fail ? "    ❌" : " ⚠️";
                                             reportePorArchivo += `  ${estado} ${test.title} (${test.duration}ms)\n`;
                                         });
                                     }
@@ -78,7 +79,7 @@ async function main() {
             }
             
             // File statistics
-            reportePorArchivo += `\n📊 Summary: ✅ ${json.stats.passes} | ❌ ${json.stats.failures} | ⏱️ ${json.stats.duration}ms\n`;
+            reportePorArchivo += `\n📊 Summary: ✅ ${json.stats.passes} | ❌ ${totalStats.failures} | ⏱️ ${json.stats.duration}ms\n`;
             
             resultadosDetallados.push(reportePorArchivo);
         }
